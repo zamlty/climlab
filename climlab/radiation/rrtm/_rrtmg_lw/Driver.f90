@@ -99,6 +99,7 @@ subroutine climlab_rrtmg_lw &
     inflglw , iceflglw, liqflglw, cldfmcl , &
     taucmcl , ciwpmcl , clwpmcl , reicmcl , relqmcl , tauaer  , &
     uflx    , dflx    , hr      , uflxc   , dflxc,  hrc, &
+    uflxs   , dflxs   , &
     duflx_dt,duflxc_dt)
 
 ! Modules
@@ -152,6 +153,9 @@ subroutine climlab_rrtmg_lw &
     real(kind=rb), intent(out) :: dflxc(ncol,nlay+1)     ! Clear sky longwave downward flux (W/m2)
     real(kind=rb), intent(out) :: hrc(ncol,nlay)         ! Clear sky longwave radiative heating rate (K/d)
 
+    real(kind=rb), intent(out) :: uflxs(nbndlw,ncol,nlay+1)     ! Total sky longwave spectral upward flux (W/m2)
+    real(kind=rb), intent(out) :: dflxs(nbndlw,ncol,nlay+1)     ! Total sky longwave spectral downward flux (W/m2)
+
     real(kind=rb), intent(out) :: duflx_dt(ncol,nlay+1)  ! change in upward longwave flux (w/m2/K)
                                                          ! with respect to surface temperature
     real(kind=rb), intent(out) :: duflxc_dt(ncol,nlay+1) ! change in clear sky upward longwave flux (w/m2/K)
@@ -165,7 +169,7 @@ subroutine climlab_rrtmg_lw &
 !f2py depend(ncol,nlay) tauaer
 !f2py depend(ncol,nlay) cldfmcl,ciwpmcl,clwpmcl,taucmcl
 !f2py depend(ncol,nlay) reicmcl,relqmcl
-!f2py depend(ncol,nlay) uflx,dflx,hr,uflxc,dflxc,hrc,duflx_dt,duflxc_dt
+!f2py depend(ncol,nlay) uflx,dflx,hr,uflxc,dflxc,hrc,duflx_dt,duflxc_dt,uflxs,dflxs
 
     !  Call the RRTMG_LW driver to compute radiative fluxes
     call rrtmg_lw(ncol    ,nlay    ,icld    ,idrv    , &
@@ -175,6 +179,7 @@ subroutine climlab_rrtmg_lw &
              inflglw , iceflglw, liqflglw, cldfmcl , &
              taucmcl , ciwpmcl , clwpmcl , reicmcl , relqmcl , tauaer  , &
              uflx    , dflx    , hr      , uflxc   , dflxc,  hrc, &
+             uflxs   , dflxs   , &
              duflx_dt,duflxc_dt )
 
 end subroutine climlab_rrtmg_lw

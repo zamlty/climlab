@@ -100,7 +100,7 @@ class RRTMG_LW(_Radiation_LW):
                             permuteseed, irng, play,
                             cldfrac, ciwp, clwp, reic, relq, tauc)
             #  Call the RRTMG_LW driver to compute radiative fluxes
-        (uflx, dflx, hr, uflxc, dflxc, hrc, duflx_dt, duflxc_dt) = \
+        (uflx, dflx, hr, uflxc, dflxc, hrc, uflxs, dflxs, duflx_dt, duflxc_dt) = \
             _rrtmg_lw.climlab_rrtmg_lw(ncol, nlay, icld, idrv,
                  play, plev, tlay, tlev, tsfc,
                  h2ovmr, o3vmr, co2vmr, ch4vmr, n2ovmr, o2vmr,
@@ -113,6 +113,10 @@ class RRTMG_LW(_Radiation_LW):
         self.LW_flux_down = _rrtm_to_climlab(dflx) + 0.*self.LW_flux_down
         self.LW_flux_up_clr = _rrtm_to_climlab(uflxc) + 0.*self.LW_flux_up_clr
         self.LW_flux_down_clr = _rrtm_to_climlab(dflxc) + 0.*self.LW_flux_down_clr
+
+        self.LW_flux_up_spectral = _rrtm_to_climlab(uflxs)
+        self.LW_flux_down_spectral = _rrtm_to_climlab(dflxs)
+
         #  Compute quantities derived from fluxes, including OLR
         self._compute_LW_flux_diagnostics()
         #  calculate heating rates from flux divergence

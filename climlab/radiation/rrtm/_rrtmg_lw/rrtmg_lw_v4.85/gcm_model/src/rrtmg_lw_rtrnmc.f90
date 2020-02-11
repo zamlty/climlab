@@ -34,6 +34,7 @@
                         pwvcm, fracs, taut, &
                         totuflux, totdflux, fnet, htr, &
                         totuclfl, totdclfl, fnetc, htrc, &
+                        totufluxs, totdfluxs, &
                         idrv, dplankbnd_dt, dtotuflux_dt, dtotuclfl_dt )
 !-----------------------------------------------------------------------------
 !
@@ -113,6 +114,13 @@
                                                       !    Dimensions: (0:nlayers)
       real(kind=rb), intent(out) :: htrc(0:)          ! clear sky longwave heating rate (k/day)
                                                       !    Dimensions: (0:nlayers)
+
+      real(kind=rb), intent(out) :: totufluxs(:,0:)   ! spectral upward longwave flux (w/m2)
+                                                      !    Dimensions: (nbndlw,0:nlayers)
+      real(kind=rb), intent(out) :: totdfluxs(:,0:)   ! spectral downward longwave flux (w/m2)
+                                                      !    Dimensions: (nbndlw,0:nlayers)
+
+
       real(kind=rb), intent(out) :: dtotuflux_dt(0:)  ! change in upward longwave flux (w/m2/k)
                                                       ! with respect to surface temperature
                                                       !    Dimensions: (0:nlayers)
@@ -221,6 +229,8 @@
 !    totdclfl                     ! clear sky downward longwave flux (w/m2)
 !    fnetc                        ! clear sky net longwave flux (w/m2)
 !    htrc                         ! clear sky longwave heating rate (k/day)
+!    totufluxs                    ! spectral upward longwave flux (w/m2)
+!    totdfluxs                    ! spectral downward longwave flux (w/m2)
 !    dtotuflux_dt                 ! change in upward longwave flux (w/m2/k)
 !                                 ! with respect to surface temperature
 !    dtotuclfl_dt                 ! change in clear sky upward longwave flux (w/m2/k)
@@ -529,6 +539,9 @@
             clrdrad(lev) = 0.0_rb
             totuclfl(lev) = totuclfl(lev) + uclfl(lev) * delwave(iband)
             totdclfl(lev) = totdclfl(lev) + dclfl(lev) * delwave(iband)
+
+            totufluxs(iband,lev) = uflux(lev) * delwave(iband)
+            totdfluxs(iband,lev) = dflux(lev) * delwave(iband)
          enddo
 
 ! Calculate total change in upward flux wrt surface temperature
@@ -554,6 +567,9 @@
       totdclfl(0) = totdclfl(0) * fluxfac
       fnetc(0) = totuclfl(0) - totdclfl(0)
 
+      totufluxs(:,0) = totufluxs(:,0) * fluxfac
+      totdfluxs(:,0) = totdfluxs(:,0) * fluxfac
+
 ! Calculate fluxes at model levels
       do lev = 1, nlayers
          totuflux(lev) = totuflux(lev) * fluxfac
@@ -562,6 +578,10 @@
          totuclfl(lev) = totuclfl(lev) * fluxfac
          totdclfl(lev) = totdclfl(lev) * fluxfac
          fnetc(lev) = totuclfl(lev) - totdclfl(lev)
+
+         totufluxs(:,lev) = totufluxs(:,lev) * fluxfac
+         totdfluxs(:,lev) = totdfluxs(:,lev) * fluxfac
+
          l = lev - 1
 
 ! Calculate heating rates at model layers
